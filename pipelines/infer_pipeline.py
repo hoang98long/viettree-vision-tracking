@@ -8,6 +8,8 @@ from vision.camera.video_file import VideoFileCamera
 from models.yolov11.infer import YOLOv11Infer
 from models.trackers.simple_tracker import SimpleTracker
 from logic.counter.line_counter import LineCounter
+from logic.state.system_state import SystemState
+from logic.state.camera_state import CameraState
 from services.exporter.rest_exporter import RestExporter
 import time
 
@@ -40,6 +42,8 @@ class InferPipeline:
             device_id=self.system["device_id"]
         )
         self.last_push = time.time()
+        self.system_state = SystemState()
+        self.camera_state = CameraState()
 
     def run(self):
         self.logger.info("Infer pipeline started")
@@ -49,7 +53,9 @@ class InferPipeline:
             ret, frame = cap.read()
             if not ret:
                 break
-
+            self.camera_state.update(ret)
+            self.system_state.tick()
+            
             detections = self.detector.detect(
                 frame,
                 self.counter_cfg["classes"]
