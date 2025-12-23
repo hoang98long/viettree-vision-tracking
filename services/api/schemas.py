@@ -1,8 +1,8 @@
 from pydantic import BaseModel
+from typing import Dict
 from datetime import datetime
 
-class CountCreate(BaseModel):
+class EdgePayload(BaseModel):
     device_id: str
-    class_name: str
-    value: int
     timestamp: datetime
+    counts: Dict[str, int]

@@ -2,17 +2,15 @@ from services.storage.database import SessionLocal
 from services.storage.models import Count
 
 class CounterRepository:
-    def create(self, data):
+    def save_payload(self, payload):
         db = SessionLocal()
-        obj = Count(**data.dict())
-        db.add(obj)
+        for cls, val in payload.counts.items():
+            obj = Count(
+                device_id=payload.device_id,
+                class_name=cls,
+                value=val,
+                timestamp=payload.timestamp
+            )
+            db.add(obj)
         db.commit()
-        db.refresh(obj)
         db.close()
-        return obj
-
-    def list(self):
-        db = SessionLocal()
-        res = db.query(Count).all()
-        db.close()
-        return res

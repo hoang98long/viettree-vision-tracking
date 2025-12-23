@@ -1,14 +1,11 @@
 from fastapi import APIRouter
+from services.api.schemas import EdgePayload
 from services.storage.repository import CounterRepository
-from services.api.schemas import CountCreate
 
 router = APIRouter()
 repo = CounterRepository()
 
-@router.post("/counts")
-def create_count(data: CountCreate):
-    return repo.create(data)
-
-@router.get("/counts")
-def list_counts():
-    return repo.list()
+@router.post("/edge/push")
+def push_from_edge(payload: EdgePayload):
+    repo.save_payload(payload)
+    return {"status": "ok"}
