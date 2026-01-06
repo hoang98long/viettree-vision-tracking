@@ -55,7 +55,7 @@ class InferPipeline:
                 break
             self.camera_state.update(ret)
             self.system_state.tick()
-            
+
             detections = self.detector.detect(
                 frame,
                 self.counter_cfg["classes"]
